@@ -1,14 +1,14 @@
 import { RequestHandler } from "express";
 import firebaseAdmin from "firebase-admin";
-
-firebaseAdmin.initializeApp({
-  credential: firebaseAdmin.credential.cert(
-    require("./serviceAccountKey.json")
-  ),
-  databaseURL: process.env.REACT_APP_FIREBASE_DATABASE_URL,
-});
-
+import { readFileSync } from "fs";
 const firebaseAuthMiddleware = async (req, res) => {
+  //TODO: transformar em import
+  const firebaseServiceAccountKey = readFileSync("./serviceAccountKey.json");
+  firebaseAdmin.initializeApp({
+    credential: firebaseAdmin.credential.cert(firebaseServiceAccountKey),
+    databaseURL: process.env.REACT_APP_FIREBASE_DATABASE_URL,
+  });
+
   const authHeader = req.get("authorization");
 
   if (!authHeader) {
@@ -30,4 +30,4 @@ const firebaseAuthMiddleware = async (req, res) => {
   }
 };
 
-export default module.exports = firebaseAuthMiddleware;
+export default firebaseAuthMiddleware;

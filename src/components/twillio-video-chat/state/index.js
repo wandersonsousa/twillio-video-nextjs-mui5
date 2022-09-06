@@ -1,9 +1,9 @@
-import React, { createContext, useContext, useReducer, useState } from 'react';
-import { settingsReducer, initialSettings } from './settings/settingsReducer';
-import useActiveSinkId from './useActiveSinkId/useActiveSinkId';
-import useFirebaseAuth from './useFirebaseAuth/useFirebaseAuth';
-import { useLocalStorageState } from '../hooks/useLocalStorageState/useLocalStorageState';
-import usePasscodeAuth from './usePasscodeAuth/usePasscodeAuth';
+import React, { createContext, useContext, useReducer, useState } from "react";
+import { settingsReducer, initialSettings } from "./settings/settingsReducer";
+import useActiveSinkId from "./useActiveSinkId/useActiveSinkId";
+import useFirebaseAuth from "./useFirebaseAuth/useFirebaseAuth";
+import { useLocalStorageState } from "../hooks/useLocalStorageState/useLocalStorageState";
+import usePasscodeAuth from "./usePasscodeAuth/usePasscodeAuth";
 
 export const StateContext = createContext(null);
 
@@ -19,14 +19,20 @@ export const StateContext = createContext(null);
 export default function AppStateProvider(props) {
   const [error, setError] = useState(null);
   const [isFetching, setIsFetching] = useState(false);
-  const [isGalleryViewActive, setIsGalleryViewActive] = useLocalStorageState('gallery-view-active-key', true);
-  const [activeSinkId, setActiveSinkId] = useActiveSinkId();
-  const [settings, dispatchSetting] = useReducer(settingsReducer, initialSettings);
-  const [roomType, setRoomType] = useState();
-  const [maxGalleryViewParticipants, setMaxGalleryViewParticipants] = useLocalStorageState(
-    'max-gallery-participants-key',
-    6
+  const [isGalleryViewActive, setIsGalleryViewActive] = useLocalStorageState(
+    "gallery-view-active-key",
+    true
   );
+  const [activeSinkId, setActiveSinkId] = useActiveSinkId();
+  const [settings, dispatchSetting] = useReducer(
+    settingsReducer,
+    initialSettings
+  );
+  const [roomType, setRoomType] = useState();
+  const [
+    maxGalleryViewParticipants,
+    setMaxGalleryViewParticipants,
+  ] = useLocalStorageState("max-gallery-participants-key", 6);
 
   let contextValue = {
     error,
@@ -43,12 +49,12 @@ export default function AppStateProvider(props) {
     setMaxGalleryViewParticipants,
   };
 
-  if (process.env.REACT_APP_SET_AUTH === 'firebase') {
+  if (process.env.REACT_APP_SET_AUTH === "firebase") {
     contextValue = {
       ...contextValue,
       ...useFirebaseAuth(), // eslint-disable-line react-hooks/rules-of-hooks
     };
-  } else if (process.env.REACT_APP_SET_AUTH === 'passcode') {
+  } else if (process.env.REACT_APP_SET_AUTH === "passcode") {
     contextValue = {
       ...contextValue,
       ...usePasscodeAuth(), // eslint-disable-line react-hooks/rules-of-hooks
@@ -57,36 +63,39 @@ export default function AppStateProvider(props) {
     contextValue = {
       ...contextValue,
       getToken: async (user_identity, room_name) => {
-        const endpoint = process.env.REACT_APP_TOKEN_ENDPOINT || '/token';
+        const endpoint = process.env.NEXT_PUBLIC_TOKEN_ENDPOINT || "/api/token";
 
         return fetch(endpoint, {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'content-type': 'application/json',
+            "content-type": "application/json",
           },
           body: JSON.stringify({
             user_identity,
             room_name,
-            create_conversation: process.env.REACT_APP_DISABLE_TWILIO_CONVERSATIONS !== 'true',
+            create_conversation:
+              process.env.NEXT_PUBLIC_DISABLE_TWILIO_CONVERSATIONS !== "true",
           }),
-        }).then(res => res.json());
+        }).then((res) => res.json());
       },
       updateRecordingRules: async (room_sid, rules) => {
-        const endpoint = process.env.REACT_APP_TOKEN_ENDPOINT || '/recordingrules';
+        const endpoint =
+          process.env.NEXT_PUBLIC_RECORDINGRULES_ENDPOINT || "/api/recordingrules";
 
         return fetch(endpoint, {
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({ room_sid, rules }),
-          method: 'POST',
+          method: "POST",
         })
-          .then(async res => {
+          .then(async (res) => {
             const jsonResponse = await res.json();
 
             if (!res.ok) {
               const recordingError = new Error(
-                jsonResponse.error?.message || 'There was an error updating recording rules'
+                jsonResponse.error?.message ||
+                  "There was an error updating recording rules"
               );
               recordingError.code = jsonResponse.error?.code;
               return Promise.reject(recordingError);
@@ -94,7 +103,7 @@ export default function AppStateProvider(props) {
 
             return jsonResponse;
           })
-          .catch(err => setError(err));
+          .catch((err) => setError(err));
       },
     };
   }
@@ -103,12 +112,12 @@ export default function AppStateProvider(props) {
     setIsFetching(true);
     return contextValue
       .getToken(name, room)
-      .then(res => {
+      .then((res) => {
         setRoomType(res.room_type);
         setIsFetching(false);
         return res;
       })
-      .catch(err => {
+      .catch((err) => {
         setError(err);
         setIsFetching(false);
         return Promise.reject(err);
@@ -119,11 +128,11 @@ export default function AppStateProvider(props) {
     setIsFetching(true);
     return contextValue
       .updateRecordingRules(room_sid, rules)
-      .then(res => {
+      .then((res) => {
         setIsFetching(false);
         return res;
       })
-      .catch(err => {
+      .catch((err) => {
         setError(err);
         setIsFetching(false);
         return Promise.reject(err);
@@ -131,7 +140,9 @@ export default function AppStateProvider(props) {
   };
 
   return (
-    <StateContext.Provider value={{ ...contextValue, getToken, updateRecordingRules }}>
+    <StateContext.Provider
+      value={{ ...contextValue, getToken, updateRecordingRules }}
+    >
       {props.children}
     </StateContext.Provider>
   );
@@ -140,7 +151,7 @@ export default function AppStateProvider(props) {
 export function useAppState() {
   const context = useContext(StateContext);
   if (!context) {
-    throw new Error('useAppState must be used within the AppStateProvider');
+    throw new Error("useAppState must be used within the AppStateProvider");
   }
   return context;
 }

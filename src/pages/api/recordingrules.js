@@ -1,11 +1,15 @@
+import Twilio from "twilio";
 import { createExpressHandler } from "../../server/createExpressHandler";
+import firebaseAuthMiddleware from "../../server/firebaseAuthMiddleware";
+import { handler as recordingRulesFunctionHandler } from "../../server/recordingRulesFunctions";
 
 export default function handler(req, res) {
-  const recordingRulesFunction = require("@twilio-labs/plugin-rtc/src/serverless/functions/recordingrules")
-    .handler;
-  const recordingRulesEndpoint = createExpressHandler(recordingRulesFunction);
+  const recordingRulesEndpoint = createExpressHandler(
+    recordingRulesFunctionHandler
+  );
 
-  process.env.REACT_APP_SET_AUTH === "firebase" &&
-    require("../../server/firebaseAuthMiddleware")(req, res);
+  if (process.env.REACT_APP_SET_AUTH === "firebase")
+    firebaseAuthMiddleware(req, res);
+
   recordingRulesEndpoint(req, res);
 }

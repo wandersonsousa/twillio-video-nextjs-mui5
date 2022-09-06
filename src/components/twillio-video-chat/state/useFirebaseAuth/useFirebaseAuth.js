@@ -22,7 +22,7 @@ export default function useFirebaseAuth() {
       headers.set('Authorization', idToken);
       headers.set('content-type', 'application/json');
 
-      const endpoint = process.env.REACT_APP_TOKEN_ENDPOINT || '/token';
+      const endpoint = process.env.NEXT_PUBLIC_TOKEN_ENDPOINT || '/token';
 
       return fetch(endpoint, {
         method: 'POST',
@@ -30,7 +30,7 @@ export default function useFirebaseAuth() {
         body: JSON.stringify({
           user_identity,
           room_name,
-          create_conversation: process.env.REACT_APP_DISABLE_TWILIO_CONVERSATIONS !== 'true',
+          create_conversation: process.env.NEXT_PUBLIC_DISABLE_TWILIO_CONVERSATIONS !== 'true',
         }),
       }).then(res => res.json());
     },

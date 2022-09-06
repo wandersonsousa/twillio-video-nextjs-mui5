@@ -1,11 +1,14 @@
+import Twilio from "twilio";
 import { createExpressHandler } from "../../server/createExpressHandler";
+import { handler as tokenFunctionHandler } from "../../server/tokenFunction";
+import firebaseAuthMiddleware from "../../server/firebaseAuthMiddleware";
 
 export default function handler(req, res) {
-  const tokenFunction = require("@twilio-labs/plugin-rtc/src/serverless/functions/token")
-    .handler;
-  const tokenEndpoint = createExpressHandler(tokenFunction);
+  const tokenEndpoint = createExpressHandler(tokenFunctionHandler);
 
-  process.env.REACT_APP_SET_AUTH === "firebase" &&
-    require("../../server/firebaseAuthMiddleware")(req, res);
+  if (process.env.REACT_APP_SET_AUTH === "firebase") {
+    firebaseAuthMiddleware(req, res);
+  }
+
   tokenEndpoint(req, res);
 }

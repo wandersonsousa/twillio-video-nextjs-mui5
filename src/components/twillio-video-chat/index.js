@@ -15,7 +15,7 @@ import {
 import ErrorDialog from "./components/ErrorDialog/ErrorDialog";
 import LoginPage from "./components/LoginPage/LoginPage";
 import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
-import theme from "./theme";
+import theme from "../../styles/theme";
 import { ChatProvider } from "./components/ChatProvider";
 import { ParticipantProvider } from "./components/ParticipantProvider";
 import { VideoProvider } from "./components/VideoProvider";
