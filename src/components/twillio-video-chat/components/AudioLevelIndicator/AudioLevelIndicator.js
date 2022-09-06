@@ -1,13 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { interval } from 'd3-timer';
-import useIsTrackEnabled from '../../hooks/useIsTrackEnabled/useIsTrackEnabled';
-import useMediaStreamTrack from '../../hooks/useMediaStreamTrack/useMediaStreamTrack';
+import React, { useEffect, useRef, useState } from "react";
+import { interval } from "d3-timer";
+import useIsTrackEnabled from "../../hooks/useIsTrackEnabled/useIsTrackEnabled";
+import useMediaStreamTrack from "../../hooks/useMediaStreamTrack/useMediaStreamTrack";
 
 let clipId = 0;
 const getUniqueClipId = () => clipId++;
-
-// @ts-ignore
-const AudioContext = window.AudioContext || window.webkitAudioContext;
 
 export function initializeAnalyser(stream) {
   const audioContext = new AudioContext(); // Create a new audioContext for each audio indicator
@@ -21,8 +18,8 @@ export function initializeAnalyser(stream) {
 
   // Here we provide a way for the audioContext to be closed.
   // Closing the audioContext allows the unused audioSource to be garbage collected.
-  stream.addEventListener('cleanup', () => {
-    if (audioContext.state !== 'closed') {
+  stream.addEventListener("cleanup", () => {
+    if (audioContext.state !== "closed") {
       audioContext.close();
     }
   });
@@ -30,20 +27,21 @@ export function initializeAnalyser(stream) {
   return analyser;
 }
 
-const isIOS = /iPhone|iPad/.test(navigator.userAgent);
-
-function AudioLevelIndicator({ audioTrack, color = 'white' }) {
+function AudioLevelIndicator({ audioTrack, color = "white" }) {
   const SVGRectRef = useRef(null);
   const [analyser, setAnalyser] = useState();
   const isTrackEnabled = useIsTrackEnabled(audioTrack);
   const mediaStreamTrack = useMediaStreamTrack(audioTrack);
+  const isIOS = navigator && /iPhone|iPad/.test(navigator.userAgent);
 
   useEffect(() => {
     if (audioTrack && mediaStreamTrack && isTrackEnabled) {
       // Here we create a new MediaStream from a clone of the mediaStreamTrack.
       // A clone is created to allow multiple instances of this component for a single
       // AudioTrack on iOS Safari. We only clone the mediaStreamTrack on iOS.
-      let newMediaStream = new MediaStream([isIOS ? mediaStreamTrack.clone() : mediaStreamTrack]);
+      let newMediaStream = new MediaStream([
+        isIOS ? mediaStreamTrack.clone() : mediaStreamTrack,
+      ]);
 
       // Here we listen for the 'stopped' event on the audioTrack. When the audioTrack is stopped,
       // we stop the cloned track that is stored in 'newMediaStream'. It is important that we stop
@@ -53,16 +51,18 @@ function AudioLevelIndicator({ audioTrack, color = 'white' }) {
         if (isIOS) {
           // If we are on iOS, then we want to stop the MediaStreamTrack that we have previously cloned.
           // If we are not on iOS, then we do not stop the MediaStreamTrack since it is the original and still in use.
-          newMediaStream.getTracks().forEach(track => track.stop());
+          newMediaStream.getTracks().forEach((track) => track.stop());
         }
-        newMediaStream.dispatchEvent(new Event('cleanup')); // Stop the audioContext
+        newMediaStream.dispatchEvent(new Event("cleanup")); // Stop the audioContext
       };
-      audioTrack.on('stopped', stopAllMediaStreamTracks);
+      audioTrack.on("stopped", stopAllMediaStreamTracks);
 
       const reinitializeAnalyser = () => {
         stopAllMediaStreamTracks();
         // We only clone the mediaStreamTrack on iOS.
-        newMediaStream = new MediaStream([isIOS ? mediaStreamTrack.clone() : mediaStreamTrack]);
+        newMediaStream = new MediaStream([
+          isIOS ? mediaStreamTrack.clone() : mediaStreamTrack,
+        ]);
         setAnalyser(initializeAnalyser(newMediaStream));
       };
 
@@ -71,15 +71,21 @@ function AudioLevelIndicator({ audioTrack, color = 'white' }) {
       // Here we reinitialize the AnalyserNode on focus to avoid an issue in Safari
       // where the analysers stop functioning when the user switches to a new tab
       // and switches back to the app.
-      window.addEventListener('focus', reinitializeAnalyser);
+      window.addEventListener("focus", reinitializeAnalyser);
 
       return () => {
         stopAllMediaStreamTracks();
-        window.removeEventListener('focus', reinitializeAnalyser);
-        audioTrack.off('stopped', stopAllMediaStreamTracks);
+        window.removeEventListener("focus", reinitializeAnalyser);
+        audioTrack.off("stopped", stopAllMediaStreamTracks);
       };
     }
   }, [isTrackEnabled, mediaStreamTrack, audioTrack]);
+
+  useEffect(() => {
+    if (window) {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+    }
+  }, []);
 
   useEffect(() => {
     const SVGClipElement = SVGRectRef.current;
@@ -96,13 +102,16 @@ function AudioLevelIndicator({ audioTrack, color = 'white' }) {
           values += sampleArray[i];
         }
 
-        const volume = Math.min(14, Math.max(0, Math.log10(values / length / 3) * 7));
+        const volume = Math.min(
+          14,
+          Math.max(0, Math.log10(values / length / 3) * 7)
+        );
 
-        SVGClipElement?.setAttribute('y', String(14 - volume));
+        SVGClipElement?.setAttribute("y", String(14 - volume));
       }, 100);
 
       return () => {
-        SVGClipElement.setAttribute('y', '14');
+        SVGClipElement.setAttribute("y", "14");
         timer.stop();
       };
     }
@@ -112,7 +121,13 @@ function AudioLevelIndicator({ audioTrack, color = 'white' }) {
   const clipPathId = `audio-level-clip-${getUniqueClipId()}`;
 
   return isTrackEnabled ? (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" data-test-audio-indicator>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      data-test-audio-indicator
+    >
       <defs>
         <clipPath id={clipPathId}>
           <rect ref={SVGRectRef} x="0" y="14" width="24" height="24" />

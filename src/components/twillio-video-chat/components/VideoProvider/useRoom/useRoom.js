@@ -1,15 +1,17 @@
-import { isMobile } from '../../../utils';
-import Video from 'twilio-video';
-import { VideoRoomMonitor } from '@twilio/video-room-monitor';
-import { useCallback, useEffect, useRef, useState } from 'react';
-
-// @ts-ignore
-window.TwilioVideo = Video;
+import { isMobile } from "../../../utils";
+import Video from "twilio-video";
+import { VideoRoomMonitor } from "@twilio/video-room-monitor";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useMemo } from "react";
 
 export default function useRoom(localTracks, onError, options) {
   const [room, setRoom] = useState(null);
   const [isConnecting, setIsConnecting] = useState(false);
   const optionsRef = useRef(options);
+
+  useEffect(() => {
+    if (window) window.TwilioVideo = Video;
+  }, []);
 
   useEffect(() => {
     // This allows the connect function to always access the most recent version of the options object. This allows us to
@@ -18,10 +20,13 @@ export default function useRoom(localTracks, onError, options) {
   }, [options]);
 
   const connect = useCallback(
-    token => {
+    (token) => {
       setIsConnecting(true);
-      return Video.connect(token, { ...optionsRef.current, tracks: localTracks }).then(
-        newRoom => {
+      return Video.connect(token, {
+        ...optionsRef.current,
+        tracks: localTracks,
+      }).then(
+        (newRoom) => {
           setRoom(newRoom);
           VideoRoomMonitor.registerVideoRoom(newRoom);
           const disconnect = () => newRoom.disconnect();
@@ -30,37 +35,37 @@ export default function useRoom(localTracks, onError, options) {
           // a warning from the EventEmitter object. Here we increase the max listeners to suppress the warning.
           newRoom.setMaxListeners(16);
 
-          newRoom.once('disconnected', () => {
+          newRoom.once("disconnected", () => {
             // Reset the room only after all other `disconnected` listeners have been called.
             setTimeout(() => setRoom(null));
-            window.removeEventListener('beforeunload', disconnect);
+            window.removeEventListener("beforeunload", disconnect);
 
             if (isMobile) {
-              window.removeEventListener('pagehide', disconnect);
+              window.removeEventListener("pagehide", disconnect);
             }
           });
 
           // @ts-ignore
           window.twilioRoom = newRoom;
 
-          newRoom.localParticipant.videoTracks.forEach(publication =>
+          newRoom.localParticipant.videoTracks.forEach((publication) =>
             // All video tracks are published with 'low' priority because the video track
             // that is displayed in the 'MainParticipant' component will have it's priority
             // set to 'high' via track.setPriority()
-            publication.setPriority('low')
+            publication.setPriority("low")
           );
 
           setIsConnecting(false);
 
           // Add a listener to disconnect from the room when a user closes their browser
-          window.addEventListener('beforeunload', disconnect);
+          window.addEventListener("beforeunload", disconnect);
 
           if (isMobile) {
             // Add a listener to disconnect from the room when a mobile user closes their browser
-            window.addEventListener('pagehide', disconnect);
+            window.addEventListener("pagehide", disconnect);
           }
         },
-        error => {
+        (error) => {
           onError(error);
           setIsConnecting(false);
         }
