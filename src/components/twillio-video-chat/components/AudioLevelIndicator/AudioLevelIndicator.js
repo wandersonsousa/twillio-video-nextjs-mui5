@@ -79,7 +79,7 @@ function AudioLevelIndicator({ audioTrack, color = "white" }) {
         audioTrack.off("stopped", stopAllMediaStreamTracks);
       };
     }
-  }, [isTrackEnabled, mediaStreamTrack, audioTrack]);
+  }, [isTrackEnabled, mediaStreamTrack, audioTrack, isIOS]);
 
   useEffect(() => {
     if (window) {
