@@ -13,10 +13,6 @@ export async function handler(context, event, callback) {
     ROOM_TYPE,
     CONVERSATIONS_SERVICE_SID,
   } = context;
-
-  const authHandler = require(Runtime.getAssets()["/auth-handler.js"].path);
-  authHandler(context, event, callback);
-
   const {
     user_identity,
     room_name,
@@ -24,53 +20,53 @@ export async function handler(context, event, callback) {
     create_conversation = false,
   } = event;
 
-  let response = new Twilio.Response();
-  response.appendHeader("Content-Type", "application/json");
+  let response = { statusCode: 400, headers: {}, body: {} };
+  response.headers["Content-Type"] = "application/json";
 
   if (typeof create_room !== "boolean") {
-    response.setStatusCode(400);
-    response.setBody({
+    response.statusCode = 400;
+    response.body = {
       error: {
         message: "invalid parameter",
         explanation:
           "A boolean value must be provided for the create_room parameter",
       },
-    });
+    };
     return callback(null, response);
   }
 
   if (typeof create_conversation !== "boolean") {
-    response.setStatusCode(400);
-    response.setBody({
+    response.statusCode = 400;
+    response.body = {
       error: {
         message: "invalid parameter",
         explanation:
           "A boolean value must be provided for the create_conversation parameter",
       },
-    });
+    };
     return callback(null, response);
   }
 
   if (!user_identity) {
-    response.setStatusCode(400);
-    response.setBody({
+    response.statusCode = 400;
+    response.body = {
       error: {
         message: "missing user_identity",
         explanation: "The user_identity parameter is missing.",
       },
-    });
+    };
     return callback(null, response);
   }
 
   if (!room_name && create_room) {
-    response.setStatusCode(400);
-    response.setBody({
+    response.statusCode = 400;
+    response.body = {
       error: {
         message: "missing room_name",
         explanation:
           "The room_name parameter is missing. room_name is required when create_room is true.",
       },
-    });
+    };
     return callback(null, response);
   }
 
@@ -91,13 +87,13 @@ export async function handler(context, event, callback) {
       } catch (e) {
         console.error("Error creating room:");
         console.error(e);
-        response.setStatusCode(500);
-        response.setBody({
+        response.statusCode = 500;
+        response.body = {
           error: {
             message: "error creating room",
             explanation: "Something went wrong when creating a room.",
           },
-        });
+        };
         return callback(null, response);
       }
     }
@@ -123,13 +119,13 @@ export async function handler(context, event, callback) {
         } catch (e) {
           console.error("Error creating conversation:");
           console.error(e);
-          response.setStatusCode(500);
-          response.setBody({
+          response.statusCode = 500;
+          response.body = {
             error: {
               message: "error creating conversation",
               explanation: "Something went wrong when creating a conversation.",
             },
-          });
+          };
           return callback(null, response);
         }
       }
@@ -144,14 +140,14 @@ export async function handler(context, event, callback) {
         if (e.code !== 50433) {
           console.error("Error creating conversation participant:");
           console.error(e);
-          response.setStatusCode(500);
-          response.setBody({
+          response.statusCode = 500;
+          response.body = {
             error: {
               message: "error creating conversation participant",
               explanation:
                 "Something went wrong when creating a conversation participant.",
             },
-          });
+          };
           return callback(null, response);
         }
       }
@@ -180,7 +176,7 @@ export async function handler(context, event, callback) {
   token.addGrant(chatGrant);
 
   // Return token
-  response.setStatusCode(200);
-  response.setBody({ token: token.toJwt(), room_type: ROOM_TYPE });
+  response.statusCode = 200;
+  response.body = { token: token.toJwt(), room_type: ROOM_TYPE };
   return callback(null, response);
 }

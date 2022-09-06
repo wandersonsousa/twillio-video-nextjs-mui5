@@ -33,11 +33,7 @@ export function createExpressHandler(serverlessFunction) {
   return (req, res) => {
     serverlessFunction(context, req.body, (_, serverlessResponse) => {
       const { statusCode, headers, body } = serverlessResponse;
-
-      res
-        .status(statusCode)
-        .set(headers)
-        .json(body);
+      res.status(statusCode).json(body);
     });
   };
 }
