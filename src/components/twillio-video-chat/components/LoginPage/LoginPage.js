@@ -61,7 +61,7 @@ export default function LoginPage() {
   const [passcode, setPasscode] = useState("");
   const [authError, setAuthError] = useState(null);
 
-  const isAuthEnabled = Boolean(process.env.REACT_APP_SET_AUTH);
+  const isAuthEnabled = Boolean(process.env.NEXT_PUBLIC_APP_SET_AUTH);
 
   const login = () => {
     setAuthError(null);
@@ -87,7 +87,7 @@ export default function LoginPage() {
 
   return (
     <IntroContainer>
-      {process.env.REACT_APP_SET_AUTH === "firebase" && (
+      {process.env.NEXT_PUBLIC_APP_SET_AUTH === "firebase" && (
         <>
           <Typography variant="h5" className={classes.gutterBottom}>
             Sign in to join a room
@@ -106,7 +106,7 @@ export default function LoginPage() {
         </>
       )}
 
-      {process.env.REACT_APP_SET_AUTH === "passcode" && (
+      {process.env.NEXT_PUBLIC_APP_SET_AUTH === "passcode" && (
         <>
           <Typography variant="h5" className={classes.gutterBottom}>
             Enter passcode to join a room

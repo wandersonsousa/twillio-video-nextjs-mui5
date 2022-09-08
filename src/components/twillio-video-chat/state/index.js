@@ -11,7 +11,7 @@ export const StateContext = createContext(null);
   The 'react-hooks/rules-of-hooks' linting rules prevent React Hooks from being called
   inside of if() statements. This is because hooks must always be called in the same order
   every time a component is rendered. The 'react-hooks/rules-of-hooks' rule is disabled below
-  because the "if (process.env.REACT_APP_SET_AUTH === 'firebase')" statements are evaluated
+  because the "if (process.env.NEXT_PUBLIC_APP_SET_AUTH === 'firebase')" statements are evaluated
   at build time (not runtime). If the statement evaluates to false, then the code is not
   included in the bundle that is produced (due to tree-shaking). Thus, in this instance, it
   is ok to call hooks inside if() statements.
@@ -49,12 +49,12 @@ export default function AppStateProvider(props) {
     setMaxGalleryViewParticipants,
   };
 
-  if (process.env.REACT_APP_SET_AUTH === "firebase") {
+  if (process.env.NEXT_PUBLIC_APP_SET_AUTH === "firebase") {
     contextValue = {
       ...contextValue,
       ...useFirebaseAuth(), // eslint-disable-line react-hooks/rules-of-hooks
     };
-  } else if (process.env.REACT_APP_SET_AUTH === "passcode") {
+  } else if (process.env.NEXT_PUBLIC_APP_SET_AUTH === "passcode") {
     contextValue = {
       ...contextValue,
       ...usePasscodeAuth(), // eslint-disable-line react-hooks/rules-of-hooks

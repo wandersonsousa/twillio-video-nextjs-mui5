@@ -5,7 +5,7 @@ import { useAppState } from '../../state';
 export default function PrivateRoute({ children, ...rest }) {
   const { isAuthReady, user } = useAppState();
 
-  const renderChildren = user || !process.env.REACT_APP_SET_AUTH;
+  const renderChildren = user || !process.env.NEXT_PUBLIC_APP_SET_AUTH;
 
   if (!renderChildren && !isAuthReady) {
     return null;

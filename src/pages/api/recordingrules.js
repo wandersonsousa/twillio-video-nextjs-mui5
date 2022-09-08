@@ -16,7 +16,7 @@ export default function handler(req, res) {
     recordingRulesFunctionHandler
   );
 
-  if (process.env.REACT_APP_SET_AUTH === "firebase")
+  if (process.env.NEXT_PUBLIC_APP_SET_AUTH === "firebase")
     firebaseAuthMiddleware(req, res);
 
   recordingRulesEndpoint(req, res);

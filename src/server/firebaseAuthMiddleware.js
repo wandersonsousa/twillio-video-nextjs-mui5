@@ -6,7 +6,7 @@ const firebaseAuthMiddleware = async (req, res) => {
   const firebaseServiceAccountKey = readFileSync("./serviceAccountKey.json");
   firebaseAdmin.initializeApp({
     credential: firebaseAdmin.credential.cert(firebaseServiceAccountKey),
-    databaseURL: process.env.REACT_APP_FIREBASE_DATABASE_URL,
+    databaseURL: process.env.NEXT_PUBLIC_APP_FIREBASE_DATABASE_URL,
   });
 
   const authHeader = req.get("authorization");

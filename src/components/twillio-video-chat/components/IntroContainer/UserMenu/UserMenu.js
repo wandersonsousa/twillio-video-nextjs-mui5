@@ -39,7 +39,7 @@ const UserMenu = () => {
     signOut?.();
   }, [localTracks, signOut]);
 
-  if (process.env.REACT_APP_SET_AUTH === 'passcode') {
+  if (process.env.NEXT_PUBLIC_APP_SET_AUTH === 'passcode') {
     return (
       <div className={classes.userContainer}>
         <Link onClick={handleSignOut} className={classes.logoutLink}>
@@ -49,7 +49,7 @@ const UserMenu = () => {
     );
   }
 
-  if (process.env.REACT_APP_SET_AUTH === 'firebase') {
+  if (process.env.NEXT_PUBLIC_APP_SET_AUTH === 'firebase') {
     return (
       <div className={classes.userContainer}>
         <UserAvatar user={user} />
