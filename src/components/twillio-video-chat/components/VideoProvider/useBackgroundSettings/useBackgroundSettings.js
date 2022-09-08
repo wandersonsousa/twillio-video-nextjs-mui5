@@ -1,62 +1,62 @@
-import { useEffect, useCallback } from 'react';
-import { SELECTED_BACKGROUND_SETTINGS_KEY } from '../../../constants';
+import { useEffect, useCallback } from "react";
+import { SELECTED_BACKGROUND_SETTINGS_KEY } from "../../../constants";
 import {
   GaussianBlurBackgroundProcessor,
   VirtualBackgroundProcessor,
   ImageFit,
   isSupported,
-} from '@twilio/video-processors';
-import Abstract from '../../../images/Abstract.jpg';
-import AbstractThumb from '../../../images/thumb/Abstract.jpg';
-import BohoHome from '../../../images/BohoHome.jpg';
-import BohoHomeThumb from '../../../images/thumb/BohoHome.jpg';
-import Bookshelf from '../../../images/Bookshelf.jpg';
-import BookshelfThumb from '../../../images/thumb/Bookshelf.jpg';
-import CoffeeShop from '../../../images/CoffeeShop.jpg';
-import CoffeeShopThumb from '../../../images/thumb/CoffeeShop.jpg';
-import Contemporary from '../../../images/Contemporary.jpg';
-import ContemporaryThumb from '../../../images/thumb/Contemporary.jpg';
-import CozyHome from '../../../images/CozyHome.jpg';
-import CozyHomeThumb from '../../../images/thumb/CozyHome.jpg';
-import Desert from '../../../images/Desert.jpg';
-import DesertThumb from '../../../images/thumb/Desert.jpg';
-import Fishing from '../../../images/Fishing.jpg';
-import FishingThumb from '../../../images/thumb/Fishing.jpg';
-import Flower from '../../../images/Flower.jpg';
-import FlowerThumb from '../../../images/thumb/Flower.jpg';
-import Kitchen from '../../../images/Kitchen.jpg';
-import KitchenThumb from '../../../images/thumb/Kitchen.jpg';
-import ModernHome from '../../../images/ModernHome.jpg';
-import ModernHomeThumb from '../../../images/thumb/ModernHome.jpg';
-import Nature from '../../../images/Nature.jpg';
-import NatureThumb from '../../../images/thumb/Nature.jpg';
-import Ocean from '../../../images/Ocean.jpg';
-import OceanThumb from '../../../images/thumb/Ocean.jpg';
-import Patio from '../../../images/Patio.jpg';
-import PatioThumb from '../../../images/thumb/Patio.jpg';
-import Plant from '../../../images/Plant.jpg';
-import PlantThumb from '../../../images/thumb/Plant.jpg';
-import SanFrancisco from '../../../images/SanFrancisco.jpg';
-import SanFranciscoThumb from '../../../images/thumb/SanFrancisco.jpg';
-import { useLocalStorageState } from '../../../hooks/useLocalStorageState/useLocalStorageState';
+} from "@twilio/video-processors";
+const Abstract = "/images/Abstract.jpg";
+const AbstractThumb = "/videobackgroundthumbs/Abstract.jpg";
+const BohoHome = "/images/BohoHome.jpg";
+const BohoHomeThumb = "/videobackgroundthumbs/BohoHome.jpg";
+const Bookshelf = "/images/Bookshelf.jpg";
+const BookshelfThumb = "/videobackgroundthumbs/Bookshelf.jpg";
+const CoffeeShop = "/images/CoffeeShop.jpg";
+const CoffeeShopThumb = "/videobackgroundthumbs/CoffeeShop.jpg";
+const Contemporary = "/images/Contemporary.jpg";
+const ContemporaryThumb = "/videobackgroundthumbs/Contemporary.jpg";
+const CozyHome = "/images/CozyHome.jpg";
+const CozyHomeThumb = "/videobackgroundthumbs/CozyHome.jpg";
+const Desert = "/images/Desert.jpg";
+const DesertThumb = "/videobackgroundthumbs/Desert.jpg";
+const Fishing = "/images/Fishing.jpg";
+const FishingThumb = "/videobackgroundthumbs/Fishing.jpg";
+const Flower = "/images/Flower.jpg";
+const FlowerThumb = "/videobackgroundthumbs/Flower.jpg";
+const Kitchen = "/images/Kitchen.jpg";
+const KitchenThumb = "/videobackgroundthumbs/Kitchen.jpg";
+const ModernHome = "/images/ModernHome.jpg";
+const ModernHomeThumb = "/videobackgroundthumbs/ModernHome.jpg";
+const Nature = "/images/Nature.jpg";
+const NatureThumb = "/videobackgroundthumbs/Nature.jpg";
+const Ocean = "/images/Ocean.jpg";
+const OceanThumb = "/videobackgroundthumbs/Ocean.jpg";
+const Patio = "/images/Patio.jpg";
+const PatioThumb = "/videobackgroundthumbs/Patio.jpg";
+const Plant = "/images/Plant.jpg";
+const PlantThumb = "/videobackgroundthumbs/Plant.jpg";
+const SanFrancisco = "/images/SanFrancisco.jpg";
+const SanFranciscoThumb = "/videobackgroundthumbs/SanFrancisco.jpg";
+import { useLocalStorageState } from "../../../hooks/useLocalStorageState/useLocalStorageState";
 
 const imageNames = [
-  'Abstract',
-  'Boho Home',
-  'Bookshelf',
-  'Coffee Shop',
-  'Contemporary',
-  'Cozy Home',
-  'Desert',
-  'Fishing',
-  'Flower',
-  'Kitchen',
-  'Modern Home',
-  'Nature',
-  'Ocean',
-  'Patio',
-  'Plant',
-  'San Francisco',
+  "Abstract",
+  "Boho Home",
+  "Bookshelf",
+  "Coffee Shop",
+  "Contemporary",
+  "Cozy Home",
+  "Desert",
+  "Fishing",
+  "Flower",
+  "Kitchen",
+  "Modern Home",
+  "Nature",
+  "Ocean",
+  "Patio",
+  "Plant",
+  "San Francisco",
 ];
 
 const images = [
@@ -99,7 +99,7 @@ const rawImagePaths = [
 
 let imageElements = new Map();
 
-const getImage = index => {
+const getImage = (index) => {
   return new Promise((resolve, reject) => {
     if (imageElements.has(index)) {
       return resolve(imageElements.get(index));
@@ -119,15 +119,18 @@ export const backgroundConfig = {
   images,
 };
 
-const virtualBackgroundAssets = '/virtualbackground';
+const virtualBackgroundAssets = "/virtualbackground";
 let blurProcessor;
 let virtualBackgroundProcessor;
 
 export default function useBackgroundSettings(videoTrack, room) {
-  const [backgroundSettings, setBackgroundSettings] = useLocalStorageState(SELECTED_BACKGROUND_SETTINGS_KEY, {
-    type: 'none',
-    index: 0,
-  });
+  const [backgroundSettings, setBackgroundSettings] = useLocalStorageState(
+    SELECTED_BACKGROUND_SETTINGS_KEY,
+    {
+      type: "none",
+      index: 0,
+    }
+  );
 
   const removeProcessor = useCallback(() => {
     if (videoTrack && videoTrack.processor) {
@@ -136,7 +139,7 @@ export default function useBackgroundSettings(videoTrack, room) {
   }, [videoTrack]);
 
   const addProcessor = useCallback(
-    processor => {
+    (processor) => {
       if (!videoTrack || videoTrack.processor === processor) {
         return;
       }
@@ -171,10 +174,15 @@ export default function useBackgroundSettings(videoTrack, room) {
         return;
       }
 
-      if (backgroundSettings.type === 'blur') {
+      if (backgroundSettings.type === "blur") {
         addProcessor(blurProcessor);
-      } else if (backgroundSettings.type === 'image' && typeof backgroundSettings.index === 'number') {
-        virtualBackgroundProcessor.backgroundImage = await getImage(backgroundSettings.index);
+      } else if (
+        backgroundSettings.type === "image" &&
+        typeof backgroundSettings.index === "number"
+      ) {
+        virtualBackgroundProcessor.backgroundImage = await getImage(
+          backgroundSettings.index
+        );
         addProcessor(virtualBackgroundProcessor);
       } else {
         removeProcessor();

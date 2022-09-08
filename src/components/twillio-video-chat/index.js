@@ -38,28 +38,30 @@ const VideoApp = () => {
   );
 };
 
-export const TwillioVideoChat = () => (
-  <StyledEngineProvider injectFirst>
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <UnsupportedBrowserWarning>
-        <Router>
-          <AppStateProvider>
-            <Switch>
-              <PrivateRoute exact path="/">
-                <VideoApp />
-              </PrivateRoute>
-              <PrivateRoute path="/room/:URLRoomName">
-                <VideoApp />
-              </PrivateRoute>
-              <Route path="/login">
-                <LoginPage />
-              </Route>
-              <Redirect to="/" />
-            </Switch>
-          </AppStateProvider>
-        </Router>
-      </UnsupportedBrowserWarning>
-    </ThemeProvider>
-  </StyledEngineProvider>
-);
+export default function TwillioVideoChat() {
+  return (
+    <StyledEngineProvider injectFirst>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <UnsupportedBrowserWarning>
+          <Router>
+            <AppStateProvider>
+              <Switch>
+                <PrivateRoute exact path="/">
+                  <VideoApp />
+                </PrivateRoute>
+                <PrivateRoute path="/room/:URLRoomName">
+                  <VideoApp />
+                </PrivateRoute>
+                <Route path="/login">
+                  <LoginPage />
+                </Route>
+                <Redirect to="/" />
+              </Switch>
+            </AppStateProvider>
+          </Router>
+        </UnsupportedBrowserWarning>
+      </ThemeProvider>
+    </StyledEngineProvider>
+  );
+}

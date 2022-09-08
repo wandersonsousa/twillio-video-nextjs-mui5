@@ -1,8 +1,13 @@
-import React from 'react';
+import React from "react";
 
 export default function VideoLogo() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="96"
+      height="96"
+      viewBox="0 0 96 96"
+    >
       <g fill="none" fillRule="evenodd">
         <path
           fill="#FFF"
