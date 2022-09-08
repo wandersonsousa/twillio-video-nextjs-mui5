@@ -1,40 +1,40 @@
-import React from 'react';
-import clsx from 'clsx';
-import Participant from '../Participant/Participant';
-import useMainParticipant from '../../hooks/useMainParticipant/useMainParticipant';
-import useParticipantsContext from '../../hooks/useParticipantsContext/useParticipantsContext';
-import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
-import useSelectedParticipant from '../VideoProvider/useSelectedParticipant/useSelectedParticipant';
-import useScreenShareParticipant from '../../hooks/useScreenShareParticipant/useScreenShareParticipant';
-import { makeStyles } from 'src/styles/makeStyles';
+import React from "react";
+import clsx from "clsx";
+import Participant from "../Participant/Participant";
+import useMainParticipant from "../../hooks/useMainParticipant/useMainParticipant";
+import useParticipantsContext from "../../hooks/useParticipantsContext/useParticipantsContext";
+import useVideoContext from "../../hooks/useVideoContext/useVideoContext";
+import useSelectedParticipant from "../VideoProvider/useSelectedParticipant/useSelectedParticipant";
+import useScreenShareParticipant from "../../hooks/useScreenShareParticipant/useScreenShareParticipant";
+import { makeStyles } from "src/styles/makeStyles";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles()((theme) => ({
   container: {
-    overflowY: 'auto',
-    background: 'rgb(79, 83, 85)',
-    gridArea: '1 / 2 / 1 / 3',
+    overflowY: "auto",
+    background: "rgb(79, 83, 85)",
+    gridArea: "1 / 2 / 1 / 3",
     zIndex: 5,
-    [theme.breakpoints.down('md')]: {
-      gridArea: '2 / 1 / 3 / 3',
-      overflowY: 'initial',
-      overflowX: 'auto',
-      display: 'flex',
+    [theme.breakpoints.down("md")]: {
+      gridArea: "2 / 1 / 3 / 3",
+      overflowY: "initial",
+      overflowX: "auto",
+      display: "flex",
     },
   },
   transparentBackground: {
-    background: 'transparent',
+    background: "transparent",
   },
   scrollContainer: {
-    display: 'flex',
-    justifyContent: 'center',
+    display: "flex",
+    justifyContent: "center",
   },
   innerScrollContainer: {
     width: `calc(${theme.sidebarWidth}px - 3em)`,
-    padding: '1.5em 0',
-    [theme.breakpoints.down('md')]: {
-      width: 'auto',
+    padding: "1.5em 0",
+    [theme.breakpoints.down("md")]: {
+      width: "auto",
       padding: `${theme.sidebarMobilePadding}px`,
-      display: 'flex',
+      display: "flex",
     },
   },
 }));
@@ -44,10 +44,14 @@ export default function ParticipantList() {
   const { room } = useVideoContext();
   const localParticipant = room.localParticipant;
   const { speakerViewParticipants } = useParticipantsContext();
-  const [selectedParticipant, setSelectedParticipant] = useSelectedParticipant();
+  const [
+    selectedParticipant,
+    setSelectedParticipant,
+  ] = useSelectedParticipant();
   const screenShareParticipant = useScreenShareParticipant();
   const mainParticipant = useMainParticipant();
-  const isRemoteParticipantScreenSharing = screenShareParticipant && screenShareParticipant !== localParticipant;
+  const isRemoteParticipantScreenSharing =
+    screenShareParticipant && screenShareParticipant !== localParticipant;
 
   if (speakerViewParticipants.length === 0) return null; // Don't render this component if there are no remote participants.
 
@@ -59,11 +63,16 @@ export default function ParticipantList() {
     >
       <div className={classes.scrollContainer}>
         <div className={classes.innerScrollContainer}>
-          <Participant participant={localParticipant} isLocalParticipant={true} />
-          {speakerViewParticipants.map(participant => {
+          <Participant
+            participant={localParticipant}
+            isLocalParticipant={true}
+          />
+          {speakerViewParticipants.map((participant) => {
             const isSelected = participant === selectedParticipant;
             const hideParticipant =
-              participant === mainParticipant && participant !== screenShareParticipant && !isSelected;
+              participant === mainParticipant &&
+              participant !== screenShareParticipant &&
+              !isSelected;
             return (
               <Participant
                 key={participant.sid}
