@@ -1,16 +1,16 @@
-import React from 'react';
+import React from "react";
 
-import Button from '@mui/material/Button';
-import MicIcon from '../../../icons/MicIcon';
-import MicOffIcon from '../../../icons/MicOffIcon';
+import Button from "@mui/material/Button";
+import MicIcon from "../../../icons/MicIcon";
+import MicOffIcon from "../../../icons/MicOffIcon";
 
-import useLocalAudioToggle from '../../../hooks/useLocalAudioToggle/useLocalAudioToggle';
-import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
+import useLocalAudioToggle from "../../../hooks/useLocalAudioToggle/useLocalAudioToggle";
+import useVideoContext from "../../../hooks/useVideoContext/useVideoContext";
 
 export default function ToggleAudioButton(props) {
   const [isAudioEnabled, toggleAudioEnabled] = useLocalAudioToggle();
   const { localTracks } = useVideoContext();
-  const hasAudioTrack = localTracks.some(track => track.kind === 'audio');
+  const hasAudioTrack = localTracks.some((track) => track.kind === "audio");
 
   return (
     <Button
@@ -20,7 +20,7 @@ export default function ToggleAudioButton(props) {
       startIcon={isAudioEnabled ? <MicIcon /> : <MicOffIcon />}
       data-cy-audio-toggle
     >
-      {!hasAudioTrack ? 'No Audio' : isAudioEnabled ? 'Mute' : 'Unmute'}
+      {!hasAudioTrack ? "Sem Audio" : isAudioEnabled ? "Mutar" : "Desmutar"}
     </Button>
   );
 }

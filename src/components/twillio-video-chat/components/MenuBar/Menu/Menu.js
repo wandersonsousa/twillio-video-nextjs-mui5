@@ -1,53 +1,70 @@
-import React, { useState, useRef } from 'react';
-import AboutDialog from '../../AboutDialog/AboutDialog';
-import BackgroundIcon from '../../../icons/BackgroundIcon';
-import CollaborationViewIcon from '@mui/icons-material/AccountBox';
-import DeviceSelectionDialog from '../../DeviceSelectionDialog/DeviceSelectionDialog';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import GridViewIcon from '@mui/icons-material/Apps';
-import InfoIconOutlined from '../../../icons/InfoIconOutlined';
-import MoreIcon from '@mui/icons-material/MoreVert';
-import StartRecordingIcon from '../../../icons/StartRecordingIcon';
-import StopRecordingIcon from '../../../icons/StopRecordingIcon';
-import SearchIcon from '@mui/icons-material/Search';
-import SettingsIcon from '../../../icons/SettingsIcon';
-import { Button, styled, useMediaQuery, Menu as MenuContainer, MenuItem, Typography } from '@mui/material';
-import { isSupported } from '@twilio/video-processors';
+import React, { useState, useRef } from "react";
+import AboutDialog from "../../AboutDialog/AboutDialog";
+import BackgroundIcon from "../../../icons/BackgroundIcon";
+import CollaborationViewIcon from "@mui/icons-material/AccountBox";
+import DeviceSelectionDialog from "../../DeviceSelectionDialog/DeviceSelectionDialog";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import GridViewIcon from "@mui/icons-material/Apps";
+import InfoIconOutlined from "../../../icons/InfoIconOutlined";
+import MoreIcon from "@mui/icons-material/MoreVert";
+import StartRecordingIcon from "../../../icons/StartRecordingIcon";
+import StopRecordingIcon from "../../../icons/StopRecordingIcon";
+import SearchIcon from "@mui/icons-material/Search";
+import SettingsIcon from "../../../icons/SettingsIcon";
+import {
+  Button,
+  styled,
+  useMediaQuery,
+  Menu as MenuContainer,
+  MenuItem,
+  Typography,
+} from "@mui/material";
+import { isSupported } from "@twilio/video-processors";
 
-import { useAppState } from '../../../state';
-import useChatContext from '../../../hooks/useChatContext/useChatContext';
-import useIsRecording from '../../../hooks/useIsRecording/useIsRecording';
-import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
-import FlipCameraIcon from '../../../icons/FlipCameraIcon';
-import useFlipCameraToggle from '../../../hooks/useFlipCameraToggle/useFlipCameraToggle';
-import { VideoRoomMonitor } from '@twilio/video-room-monitor';
+import { useAppState } from "../../../state";
+import useChatContext from "../../../hooks/useChatContext/useChatContext";
+import useIsRecording from "../../../hooks/useIsRecording/useIsRecording";
+import useVideoContext from "../../../hooks/useVideoContext/useVideoContext";
+import FlipCameraIcon from "../../../icons/FlipCameraIcon";
+import useFlipCameraToggle from "../../../hooks/useFlipCameraToggle/useFlipCameraToggle";
+import { VideoRoomMonitor } from "@twilio/video-room-monitor";
 
-export const IconContainer = styled('div')({
-  display: 'flex',
-  justifyContent: 'center',
-  width: '1.5em',
-  marginRight: '0.3em',
+export const IconContainer = styled("div")({
+  display: "flex",
+  justifyContent: "center",
+  width: "1.5em",
+  marginRight: "0.3em",
 });
 
 export default function Menu(props) {
-  const isMobile = useMediaQuery(theme => theme.breakpoints.down('md'));
+  const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
 
   const [aboutOpen, setAboutOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
 
-  const { isFetching, updateRecordingRules, roomType, setIsGalleryViewActive, isGalleryViewActive } = useAppState();
+  const {
+    isFetching,
+    updateRecordingRules,
+    roomType,
+    setIsGalleryViewActive,
+    isGalleryViewActive,
+  } = useAppState();
   const { setIsChatWindowOpen } = useChatContext();
   const isRecording = useIsRecording();
   const { room, setIsBackgroundSelectionOpen } = useVideoContext();
 
   const anchorRef = useRef(null);
-  const { flipCameraDisabled, toggleFacingMode, flipCameraSupported } = useFlipCameraToggle();
+  const {
+    flipCameraDisabled,
+    toggleFacingMode,
+    flipCameraSupported,
+  } = useFlipCameraToggle();
 
   return (
     <>
       <Button
-        onClick={() => setMenuOpen(isOpen => !isOpen)}
+        onClick={() => setMenuOpen((isOpen) => !isOpen)}
         ref={anchorRef}
         className={props.buttonClassName}
         data-cy-more-button
@@ -56,22 +73,22 @@ export default function Menu(props) {
           <MoreIcon />
         ) : (
           <>
-            More
+            Mais
             <ExpandMoreIcon />
           </>
         )}
       </Button>
       <MenuContainer
         open={menuOpen}
-        onClose={() => setMenuOpen(isOpen => !isOpen)}
+        onClose={() => setMenuOpen((isOpen) => !isOpen)}
         anchorEl={anchorRef.current}
         anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'left',
+          vertical: "top",
+          horizontal: "left",
         }}
         transformOrigin={{
-          vertical: isMobile ? -55 : 'bottom',
-          horizontal: 'center',
+          vertical: isMobile ? -55 : "bottom",
+          horizontal: "center",
         }}
       >
         <MenuItem onClick={() => setSettingsOpen(true)}>
@@ -105,21 +122,29 @@ export default function Menu(props) {
           </MenuItem>
         )}
 
-        {roomType !== 'peer-to-peer' && roomType !== 'go' && (
+        {roomType !== "peer-to-peer" && roomType !== "go" && (
           <MenuItem
             disabled={isFetching}
             onClick={() => {
               setMenuOpen(false);
               if (isRecording) {
-                updateRecordingRules(room.sid, [{ type: 'exclude', all: true }]);
+                updateRecordingRules(room.sid, [
+                  { type: "exclude", all: true },
+                ]);
               } else {
-                updateRecordingRules(room.sid, [{ type: 'include', all: true }]);
+                updateRecordingRules(room.sid, [
+                  { type: "include", all: true },
+                ]);
               }
             }}
             data-cy-recording-button
           >
-            <IconContainer>{isRecording ? <StopRecordingIcon /> : <StartRecordingIcon />}</IconContainer>
-            <Typography variant="body1">{isRecording ? 'Stop' : 'Start'} Recording</Typography>
+            <IconContainer>
+              {isRecording ? <StopRecordingIcon /> : <StartRecordingIcon />}
+            </IconContainer>
+            <Typography variant="body1">
+              {isRecording ? "Stop" : "Start"} Recording
+            </Typography>
           </MenuItem>
         )}
 
@@ -130,25 +155,29 @@ export default function Menu(props) {
           }}
         >
           <IconContainer>
-            <SearchIcon style={{ fill: '#707578', width: '0.9em' }} />
+            <SearchIcon style={{ fill: "#707578", width: "0.9em" }} />
           </IconContainer>
           <Typography variant="body1">Room Monitor</Typography>
         </MenuItem>
 
         <MenuItem
           onClick={() => {
-            setIsGalleryViewActive(isGallery => !isGallery);
+            setIsGalleryViewActive((isGallery) => !isGallery);
             setMenuOpen(false);
           }}
         >
           <IconContainer>
             {isGalleryViewActive ? (
-              <CollaborationViewIcon style={{ fill: '#707578', width: '0.9em' }} />
+              <CollaborationViewIcon
+                style={{ fill: "#707578", width: "0.9em" }}
+              />
             ) : (
-              <GridViewIcon style={{ fill: '#707578', width: '0.9em' }} />
+              <GridViewIcon style={{ fill: "#707578", width: "0.9em" }} />
             )}
           </IconContainer>
-          <Typography variant="body1">{isGalleryViewActive ? 'Speaker View' : 'Gallery View'}</Typography>
+          <Typography variant="body1">
+            {isGalleryViewActive ? "Speaker View" : "Gallery View"}
+          </Typography>
         </MenuItem>
 
         <MenuItem onClick={() => setAboutOpen(true)}>
